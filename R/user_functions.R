@@ -34,7 +34,7 @@ splitFrame <- function(dt, ratio, seed){
 #' @param dt data.table object
 #' @export
 removeOneLevel_fit <- function(dt, nLevels=1){
-  var_w_OneLevel <- names(which(sapply(train, nlevels)==nLevels))
+  var_w_OneLevel <- names(which(sapply(dt, nlevels)==nLevels))
   return(var_w_OneLevel)
 }
 
