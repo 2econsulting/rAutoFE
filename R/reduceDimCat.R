@@ -50,7 +50,7 @@ reduceDimCat_transform <- function(data, fit){
   column_name <- names(info)
   for (i in column_name) {
     levels(data[[i]])[!(levels(data[[i]]) %in%
-                          union((info[[i]][["min_percentage_level"]]),(info[[i]][["max_numOflevel"]])))] <- "others"
+                          intersect((info[[i]][["min_percentage_level"]]),(info[[i]][["max_numOflevel"]])))] <- "others"
   }
   return(data)
 }
