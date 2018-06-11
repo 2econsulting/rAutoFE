@@ -29,3 +29,22 @@ splitFrame <- function(dt, ratio, seed){
 }
 
 
+#' @title removeOneLevel_fit
+#' @description removeOneLevel_fit
+#' @param dt data.table object
+#' @export
+removeOneLevel_fit <- function(dt, nLevels=1){
+  var_w_OneLevel <- names(which(sapply(train, nlevels)==nLevels))
+  return(var_w_OneLevel)
+}
+
+
+#' @title removeOneLevel_transform
+#' @description removeOneLevel_transform
+#' @param dt data.table object
+#' @export
+removeOneLevel_transform <- function(dt, fit){
+  dt <- dt[, -fit, with=FALSE]
+  return(dt)
+}
+

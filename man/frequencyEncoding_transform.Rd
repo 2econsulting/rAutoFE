@@ -4,14 +4,14 @@
 \alias{frequencyEncoding_transform}
 \title{frequencyEncoding_transform}
 \usage{
-frequencyEncoding_transform(dt, x, fit)
+frequencyEncoding_transform(dt, fit)
 }
 \arguments{
 \item{dt}{data.table object}
 
-\item{x}{character vector of independet variables}
-
 \item{fit}{frequencyEncoding_fit object}
+
+\item{x}{character vector of independet variables}
 }
 \description{
 transform dataset using fit
@@ -31,7 +31,7 @@ fit <- rAutoFE::frequencyEncoding_fit(dt = train, x = x)
 saveRDS(fit,"fit.rds")
 rm(fit)
 fit <- readRDS("fit.rds")
-train <- rAutoFE::frequencyEncoding_transform(dt = train, x = x, fit = fit)
-valid <- rAutoFE::frequencyEncoding_transform(dt = valid, x = x, fit = fit)
-test  <- rAutoFE::frequencyEncoding_transform(dt = test, x = x, fit = fit)
+train <- rAutoFE::frequencyEncoding_transform(dt = train, fit = fit)
+valid <- rAutoFE::frequencyEncoding_transform(dt = valid, fit = fit)
+test  <- rAutoFE::frequencyEncoding_transform(dt = test, fit = fit)
 }

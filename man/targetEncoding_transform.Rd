@@ -4,16 +4,16 @@
 \alias{targetEncoding_transform}
 \title{targetEncoding_transform}
 \usage{
-targetEncoding_transform(dt, x, y, fit)
+targetEncoding_transform(dt, fit)
 }
 \arguments{
 \item{dt}{data.table object}
 
+\item{fit}{targetEncoding_fit object}
+
 \item{x}{character vector of independet variables}
 
 \item{y}{character string of dependent variable}
-
-\item{fit}{targetEncoding_fit object}
 }
 \description{
 transform dataset using fit
@@ -33,7 +33,7 @@ fit <- rAutoFE::targetEncoding_fit(dt = train, x = x, y = y)
 saveRDS(fit,"fit.rds")
 rm(fit)
 fit <- readRDS("fit.rds")
-train <- rAutoFE::targetEncoding_transform(dt = train, x = x, y = y, fit = fit)
-valid <- rAutoFE::targetEncoding_transform(dt = valid, x = x, y = y, fit = fit)
-test  <- rAutoFE::targetEncoding_transform(dt = test, x = x, y = y, fit = fit)
+train <- rAutoFE::targetEncoding_transform(dt = train, fit = fit)
+valid <- rAutoFE::targetEncoding_transform(dt = valid, fit = fit)
+test  <- rAutoFE::targetEncoding_transform(dt = test, fit = fit)
 }

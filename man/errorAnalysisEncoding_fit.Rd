@@ -4,32 +4,11 @@
 \alias{errorAnalysisEncoding_fit}
 \title{errorAnalysisEncoding_fit}
 \usage{
-errorAnalysisEncoding_fit(data, column_name, bins = 10, fit_type = NA,
-  x_type = "num")
+errorAnalysisEncoding_fit(data, ml, y, bins = 30, numVar = 10)
 }
 \arguments{
 \item{data}{data.table object. It must contains 'error' columns which has binary variables(0,1).}
-
-\item{column_name}{character vector of independet variables}
-
-\item{bins}{numeric vector for the number of bin}
-
-\item{fit_type}{character vector which defines 'equal size' or 'equal width'}
-
-\item{x_type}{character vector which defines 'num'(numeric variable) or 'cat'(categorical variable)}
 }
 \description{
 train for error Analysis.
-}
-\examples{
-library(rAutoFE)
-data(churn)
-churn <- as.data.table(churn)
-churn[,'error'] <- ifelse(churn[,Churn.] == "False.", 0, 1)
-churn$Account.Length[1:500] <- NA
-splits <- rAutoFE::splitFrame(dt = churn, ratio = c(0.5, 0.3), seed = 1234)
-train <- splits[[1]]
-valid <- splits[[2]]
-test <- splits[[3]]
-fit_info <- errorAnalysisEncoding_fit(data = train, column_name = c("Day.Charge", "Account.Length", "State"), fit_type = c("size", "width", NA), x_type = c("num", "num", "cat"), bins = c(5, 6, NA))
 }
