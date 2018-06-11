@@ -7,6 +7,7 @@
 #' library(rAutoFE)
 #' library(rAutoFS)
 #' library(h2o)
+#' data(churn)
 #' churn <- as.data.table(churn)
 #' splits <- rAutoFE::splitFrame(dt=churn, ratio = c(0.5, 0.3), seed = 1234)
 #' train <- splits[[1]]
@@ -37,6 +38,7 @@ bin4numeric_fit <- function(dt, vi){
 #' library(rAutoFE)
 #' library(rAutoFS)
 #' library(h2o)
+#' data(churn)
 #' churn <- as.data.table(churn)
 #' splits <- rAutoFE::splitFrame(dt=churn, ratio = c(0.5, 0.3), seed = 1234)
 #' train <- splits[[1]]

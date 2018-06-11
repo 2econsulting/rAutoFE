@@ -3,8 +3,8 @@ Title: What the Package Does (one line, title case)
 Version: 0.0.0.9000
 Authors@R: person("JongYeol", "Hyun", email = "jacobgreen1984@2e.co.k.r", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
-Depends: h2o (>= 3.18.0.8), data.table, bestNormalize, binr
-Imports: h2o, data.table, bestNormalize, binr
+Depends: h2o (>= 3.18.0.8), data.table, bestNormalize, binr, CollapseLevels
+Imports: h2o, data.table, bestNormalize, binr, CollapseLevels
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true

@@ -46,12 +46,12 @@ frequencyEncoding_fit <- function(dt, x){
 #' saveRDS(fit,"fit.rds")
 #' rm(fit)
 #' fit <- readRDS("fit.rds")
-#' train <- rAutoFE::frequencyEncoding_transform(dt = train, x = x, fit = fit)
-#' valid <- rAutoFE::frequencyEncoding_transform(dt = valid, x = x, fit = fit)
-#' test  <- rAutoFE::frequencyEncoding_transform(dt = test, x = x, fit = fit)
+#' train <- rAutoFE::frequencyEncoding_transform(dt = train, fit = fit)
+#' valid <- rAutoFE::frequencyEncoding_transform(dt = valid, fit = fit)
+#' test  <- rAutoFE::frequencyEncoding_transform(dt = test, fit = fit)
 #' @export
-frequencyEncoding_transform <- function(dt, x, fit){
-  for(i in x){
+frequencyEncoding_transform <- function(dt, fit){
+  for(i in names(fit)){
     x_map <- fit[[i]]
     setkeyv(x_map, i)
     setkeyv(dt, i)

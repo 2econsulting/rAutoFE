@@ -17,16 +17,14 @@
 #' fit <- rAutoFE::targetEncoding_fit(dt = train, x = x, y = y)
 #' @export
 targetEncoding_fit <- function(dt, x, y){
-  if(class(dt)[[1]]=="H2OFrame"){
-    h2o.target_encode_create(dt = dt, x = x, y = y)
-  }else if(class(dt)[[1]]=="data.table"){
-    fit_list <- list()
-    for(i in x){
-      setkeyv(dt, i)
-      fit_list[[i]] <- dt[ ,list(numerator=sum(as.numeric(get(y))-1,na.rm=T), denominator=.N), by=i]
-    }
-    return(fit_list)
+  info <- list()
+  for(i in x){
+    x_map <- dt[ ,list(numerator=sum(as.numeric(get(y))-1,na.rm=T), denominator=.N), by=i]
+    x_map[,paste0("TargetEncode_",i):=numerator/denominator]
+    x_map[,':='(numerator=NULL, denominator=NULL)]
+    info[[i]] <- x_map
   }
+  return(info)
 }
 
 
@@ -51,33 +49,19 @@ targetEncoding_fit <- function(dt, x, y){
 #' saveRDS(fit,"fit.rds")
 #' rm(fit)
 #' fit <- readRDS("fit.rds")
-#' train <- rAutoFE::targetEncoding_transform(dt = train, x = x, y = y, fit = fit)
-#' valid <- rAutoFE::targetEncoding_transform(dt = valid, x = x, y = y, fit = fit)
-#' test  <- rAutoFE::targetEncoding_transform(dt = test, x = x, y = y, fit = fit)
+#' train <- rAutoFE::targetEncoding_transform(dt = train, fit = fit)
+#' valid <- rAutoFE::targetEncoding_transform(dt = valid, fit = fit)
+#' test  <- rAutoFE::targetEncoding_transform(dt = test, fit = fit)
 #' @export
-targetEncoding_transform <- function(dt, x, y, fit){
-  if(class(dt)[[1]]=="H2OFrame"){
-    h2o.target_encode_apply(
-      dt = dt,
-      x = x,
-      y = y,
-      target_encode_map = fit,
-      holdout_type = "None",
-      blended_avg = FALSE,
-      noise_level = 0,
-      seed = 1234
-    )
-  }else if(class(dt)[[1]]=="data.table"){
-    for(i in x){
-      x_map <- fit[[i]]
-      x_map[,paste0("TargetEncode_",i):=numerator/denominator]
-      x_map[,':='(numerator=NULL, denominator=NULL)]
-      setkeyv(x_map, i)
-      setkeyv(dt, i)
-      dt <- x_map[dt]
-    }
-    return(dt)
+targetEncoding_transform <- function(dt, fit){
+  for(i in names(fit)){
+    x_map = fit[[i]]
+    setkeyv(x_map, i)
+    setkeyv(dt, i)
+    dt <- x_map[dt]
   }
+  return(dt)
 }
+
 
 
