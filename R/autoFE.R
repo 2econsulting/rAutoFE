@@ -27,8 +27,6 @@ autoFE <- function(train, valid, test, x, y, savePath, verbose=FALSE){
 
   if(verbose==FALSE) h2o.no_progress()
 
-  cat(">> [PART1] auto feature engineering start! \n")
-
   # 1.1 reduceDimCat
   vars_w_highlevels <- names(which(sapply(train, nlevels)>30))
   fit_reduceDimCat <- rAutoFE::reduceDimCat_fit(data=train, column_name=vars_w_highlevels, min_percentage=0.01, max_numOflevel=30)
@@ -36,6 +34,7 @@ autoFE <- function(train, valid, test, x, y, savePath, verbose=FALSE){
   valid <- rAutoFE::reduceDimCat_transform(data = valid, fit = fit_reduceDimCat)
   test  <- rAutoFE::reduceDimCat_transform(data = test,  fit = fit_reduceDimCat)
   saveRDS(fit_reduceDimCat, file.path(savePath, "fit_reduceDimCat.rda"))
+  cat(">> [PART1] auto feature engineering start! \n")
   cat(">> 1.1 reduceDimCat done! \n")
 
   # 1.2 frequencyEncoding
@@ -56,8 +55,6 @@ autoFE <- function(train, valid, test, x, y, savePath, verbose=FALSE){
   saveRDS(fit_targetEncoding, file.path(savePath, "fit_targetEncoding.rda"))
   cat(">> 1.3 targetEncoding done! \n")
 
-  cat(">> [PART2] auto feature engineering with variable importance start! \n")
-
   # 2.1 extract vi
   train_hex <- as.h2o(train)
   valid_hex <- as.h2o(valid)
@@ -76,6 +73,7 @@ autoFE <- function(train, valid, test, x, y, savePath, verbose=FALSE){
   baseline_vi <- rAutoFS::automlVarImp(lb=aml@leaderboard, num_of_model=5, num_of_vi=10)
   saveRDS(baseline_ml, file.path(savePath, "baseline_ml.rda"))
   saveRDS(baseline_vi, file.path(savePath, "baseline_vi.rda"))
+  cat(">> [PART2] auto feature engineering with variable importance start! \n")
   cat(">> 2.1 extract vi done! \n")
 
   # 2.2 bestNormalize for vi
@@ -108,27 +106,30 @@ autoFE <- function(train, valid, test, x, y, savePath, verbose=FALSE){
   saveRDS(fit_woe, file.path(savePath, "fit_woe.rda"))
   cat(">> 2.5 weightOfEvidence for vi done! \n")
 
-  # reduce high-levels for final step
+  # 3.1 reduce high-levels
   vars_w_highlevels2 <- names(which(sapply(train, nlevels)>30))
   fit_reduceDimCat2 <- rAutoFE::reduceDimCat_fit(data=train, column_name=vars_w_highlevels2, min_percentage=0.01, max_numOflevel=30)
   train <- rAutoFE::reduceDimCat_transform(data = train, fit = fit_reduceDimCat2)
   valid <- rAutoFE::reduceDimCat_transform(data = valid, fit = fit_reduceDimCat2)
   test  <- rAutoFE::reduceDimCat_transform(data = test,  fit = fit_reduceDimCat2)
   saveRDS(fit_reduceDimCat2, file.path(savePath, "fit_reduceDimCat2.rda"))
-  cat(">> reduce high-levels for final step done! \n")
+  cat(">> [PART3] final step for auto feature engineering start! \n")
+  cat(">> 3.1 reduce high-levels done! \n")
 
-  # convert all char to factor
+  # 3.2 convert all char to factor
   changeCols = names(which(sapply(train, is.character)))
   train <- train[, (changeCols):=lapply(.SD, as.factor), .SDcols=changeCols]
   valid <- valid[, (changeCols):=lapply(.SD, as.factor), .SDcols=changeCols]
   test  <- test[, (changeCols):=lapply(.SD, as.factor), .SDcols=changeCols]
+  cat(">> 3.2 convert all char to factor done! \n")
 
-  # remove one factor level
+  # 3.3 remove one factor level
   fit_removeOneLevel <- removeOneLevel_fit(dt=train, nLevels=1)
-  train <- removeOneLevel_transform(data = train, fit = fit_removeOneLevel)
-  valid <- removeOneLevel_transform(data = valid, fit = fit_removeOneLevel)
-  test  <- removeOneLevel_transform(data = test,  fit = fit_removeOneLevel)
+  train <- removeOneLevel_transform(dt=train, fit=fit_removeOneLevel)
+  valid <- removeOneLevel_transform(dt=valid, fit=fit_removeOneLevel)
+  test  <- removeOneLevel_transform(dt=test,  fit=fit_removeOneLevel)
   saveRDS(fit_removeOneLevel, file.path(savePath, "fit_removeOneLevel.rda"))
+  cat(">> 3.3 remove one factor level done! \n")
 
   # output
   output <- list(train=train, valid=valid, test=test)
