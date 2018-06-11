@@ -21,7 +21,7 @@ library(rAutoFE)
 library(data.table)
 data(churn, package = "rAutoFE")
 data.table::setDT(churn)
-splits <- dt_splitFrame(dt = churn, ratio = c(0.5, 0.3), seed = 1234)
+splits <- splitFrame(dt = churn, ratio = c(0.5, 0.3), seed = 1234)
 train <- splits[[1]]
 valid <- splits[[2]]
 test  <- splits[[3]]
