@@ -19,8 +19,8 @@ reduceDimCat_fit <- function(data, column_name, min_percentage, max_numOflevel) 
     tbl <- data.frame(prop.table(table(data[[i]])))
     tbl <- tbl[with(tbl, order(-tbl$Freq)),]
     info[[i]] <- list(
-      min_percentage_level = na.omit(tbl[tbl$Freq >= min_percentage,"Var1"]),
-      max_numOflevel = na.omit(tbl[1 : max_numOflevel,"Var1"])
+      min_percentage_level = as.character(na.omit(tbl[tbl$Freq >= min_percentage,"Var1"])),
+      max_numOflevel = as.character(na.omit(tbl[1:(max_numOflevel-1),"Var1"]))
     )
   }
   return(info)
@@ -50,7 +50,7 @@ reduceDimCat_transform <- function(data, fit){
   column_name <- names(info)
   for (i in column_name) {
     levels(data[[i]])[!(levels(data[[i]]) %in%
-                          intersect((info[[i]][["min_percentage_level"]]),(info[[i]][["max_numOflevel"]])))] <- "others"
+                          intersect((info[[i]][["min_percentage_level"]]), (info[[i]][["max_numOflevel"]])))] <- "others"
   }
   return(data)
 }
