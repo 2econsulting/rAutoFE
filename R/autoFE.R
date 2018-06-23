@@ -128,12 +128,12 @@ autoFE <- function(train, valid, test, x, y, savePath, verbose=FALSE){
   cat(">> 3.2 convert all char to factor done! \n")
 
   # 3.3 remove one factor level
-  fit_removeOneLevel <- removeOneLevel_fit(dt=train, nLevels=1)
-  train <- removeOneLevel_transform(dt=train, fit=fit_removeOneLevel)
-  valid <- removeOneLevel_transform(dt=valid, fit=fit_removeOneLevel)
-  test  <- removeOneLevel_transform(dt=test,  fit=fit_removeOneLevel)
-  saveRDS(fit_removeOneLevel, file.path(savePath, "fit_removeOneLevel.rda"))
-  cat(">> 3.3 remove one factor level done! \n")
+  # fit_removeOneLevel <- removeOneLevel_fit(dt=train, nLevels=1)
+  # train <- removeOneLevel_transform(dt=train, fit=fit_removeOneLevel)
+  # valid <- removeOneLevel_transform(dt=valid, fit=fit_removeOneLevel)
+  # test  <- removeOneLevel_transform(dt=test,  fit=fit_removeOneLevel)
+  # saveRDS(fit_removeOneLevel, file.path(savePath, "fit_removeOneLevel.rda"))
+  # cat(">> 3.3 remove one factor level done! \n")
 
   # output
   output <- list(train=train, valid=valid, test=test)
