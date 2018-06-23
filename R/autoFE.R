@@ -77,12 +77,16 @@ autoFE <- function(train, valid, test, x, y, savePath, verbose=FALSE){
   cat(">> 2.1 extract vi done! \n")
 
   # 2.2 bestNormalize for vi
+  tryCatch(
+  {
   fit_bestNormalize <- rAutoFE::bestNormalize_fit(dt=train, vi=baseline_vi$top_vi)
   train <- rAutoFE::bestNormalize_transform(dt=train, fit=fit_bestNormalize)
   valid <- rAutoFE::bestNormalize_transform(dt=valid, fit=fit_bestNormalize)
   test  <- rAutoFE::bestNormalize_transform(dt=test, fit=fit_bestNormalize)
   saveRDS(fit_bestNormalize, file.path(savePath, "fit_bestNormalize.rda"))
   cat(">> 2.2 bestNormalize for vi done! \n")
+  }, error = function(e) print(">> 2.2 error! skip this process! \n")
+  )
 
   # 2.3 bin4numeric for vi
   fit_bin4numeric <- bin4numeric_fit(dt=train, vi=baseline_vi$top_vi)
