@@ -2,6 +2,9 @@
 - title : Auto Feature Engineering in R
 - author : 2e Consulting DS Lab <jacobgreen1984@2e.co.kr>
 
+#### What's New
+- tryCatch function update (2018-06-23) 
+- impute module update (2018-06-23)
 
 #### feature engineering process  
 1) baseline model 
@@ -13,7 +16,6 @@
 7) frequency, target categorical encoding 
 8) interaction features 
 9) error analysis 
-
 
 #### install 
 ```r
