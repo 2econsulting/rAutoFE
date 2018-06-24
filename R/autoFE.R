@@ -78,62 +78,74 @@ autoFE <- function(train, valid, test, x, y, savePath, verbose=FALSE){
 
   # 2.2 bestNormalize for vi
   tryCatch(
-  {
-  fit_bestNormalize <- rAutoFE::bestNormalize_fit(dt=train, vi=baseline_vi$top_vi)
-  train <- rAutoFE::bestNormalize_transform(dt=train, fit=fit_bestNormalize)
-  valid <- rAutoFE::bestNormalize_transform(dt=valid, fit=fit_bestNormalize)
-  test  <- rAutoFE::bestNormalize_transform(dt=test, fit=fit_bestNormalize)
-  saveRDS(fit_bestNormalize, file.path(savePath, "fit_bestNormalize.rda"))
-  cat(">> 2.2 bestNormalize for vi done! \n")
-  }, error = function(e) print(">> 2.2 error! skip this process! \n")
+    {
+      fit_bestNormalize <- rAutoFE::bestNormalize_fit(dt=train, vi=baseline_vi$top_vi)
+      train <- rAutoFE::bestNormalize_transform(dt=train, fit=fit_bestNormalize)
+      valid <- rAutoFE::bestNormalize_transform(dt=valid, fit=fit_bestNormalize)
+      test  <- rAutoFE::bestNormalize_transform(dt=test, fit=fit_bestNormalize)
+      saveRDS(fit_bestNormalize, file.path(savePath, "fit_bestNormalize.rda"))
+      cat(">> 2.2 bestNormalize for vi done! \n")
+    }, error = function(e) print(">> 2.2 error! skip this process! \n")
   )
 
   # 2.3 bin4numeric for vi
-  fit_bin4numeric <- bin4numeric_fit(dt=train, vi=baseline_vi$top_vi)
-  train <- bin4numeric_transform(dt=train, fit=fit_bin4numeric)
-  valid <- bin4numeric_transform(dt=valid, fit=fit_bin4numeric)
-  test <- bin4numeric_transform(dt=test, fit=fit_bin4numeric)
-  saveRDS(fit_bin4numeric, file.path(savePath, "fit_bin4numeric.rda"))
-  cat(">> 2.3 bin4numeric for vi done! \n")
+  tryCatch(
+    {
+      fit_bin4numeric <- bin4numeric_fit(dt=train, vi=baseline_vi$top_vi)
+      train <- bin4numeric_transform(dt=train, fit=fit_bin4numeric)
+      valid <- bin4numeric_transform(dt=valid, fit=fit_bin4numeric)
+      test <- bin4numeric_transform(dt=test, fit=fit_bin4numeric)
+      saveRDS(fit_bin4numeric, file.path(savePath, "fit_bin4numeric.rda"))
+      cat(">> 2.3 bin4numeric for vi done! \n")
+    }, error = function(e) print(">> 2.3 error! skip this process! \n")
+  )
 
   # 2.4 featureCombination for vi
-  train <- featureComb_fit_transform(dt=train, vi=baseline_vi$top_vi)
-  valid <- featureComb_fit_transform(dt=valid, vi=baseline_vi$top_vi)
-  test <- featureComb_fit_transform(dt=test, vi=baseline_vi$top_vi)
-  cat(">> 2.4 featureCombination for vi done! \n")
+  tryCatch(
+    {
+      train <- featureComb_fit_transform(dt=train, vi=baseline_vi$top_vi)
+      valid <- featureComb_fit_transform(dt=valid, vi=baseline_vi$top_vi)
+      test <- featureComb_fit_transform(dt=test, vi=baseline_vi$top_vi)
+      cat(">> 2.4 featureCombination for vi done! \n")
+    }, error = function(e) print(">> 2.4 error! skip this process! \n")
+  )
 
   # 2.5 weightOfEvidence for vi
-  fit_woe <- WoE_fit(data=train, target.var=y, pred.var=baseline_vi$top_vi)
-  train <- WoE_transform(data = train, fit = fit_woe)
-  valid <- WoE_transform(data = valid, fit = fit_woe)
-  test <- WoE_transform(data = test, fit = fit_woe)
-  saveRDS(fit_woe, file.path(savePath, "fit_woe.rda"))
-  cat(">> 2.5 weightOfEvidence for vi done! \n")
+  tryCatch(
+    {
+      fit_woe <- WoE_fit(data=train, target.var=y, pred.var=baseline_vi$top_vi)
+      train <- WoE_transform(data = train, fit = fit_woe)
+      valid <- WoE_transform(data = valid, fit = fit_woe)
+      test <- WoE_transform(data = test, fit = fit_woe)
+      saveRDS(fit_woe, file.path(savePath, "fit_woe.rda"))
+      cat(">> 2.5 weightOfEvidence for vi done! \n")
+    }, error = function(e) print(">> 2.5 error! skip this process! \n")
+  )
 
   # 3.1 reduce high-levels
-  vars_w_highlevels2 <- names(which(sapply(train, nlevels)>30))
-  fit_reduceDimCat2 <- rAutoFE::reduceDimCat_fit(data=train, column_name=vars_w_highlevels2, min_percentage=0.01, max_numOflevel=30)
-  train <- rAutoFE::reduceDimCat_transform(data = train, fit = fit_reduceDimCat2)
-  valid <- rAutoFE::reduceDimCat_transform(data = valid, fit = fit_reduceDimCat2)
-  test  <- rAutoFE::reduceDimCat_transform(data = test,  fit = fit_reduceDimCat2)
-  saveRDS(fit_reduceDimCat2, file.path(savePath, "fit_reduceDimCat2.rda"))
-  cat(">> [PART3] final step for auto feature engineering start! \n")
-  cat(">> 3.1 reduce high-levels done! \n")
+  tryCatch(
+    {
+      vars_w_highlevels2 <- names(which(sapply(train, nlevels)>30))
+      fit_reduceDimCat2 <- rAutoFE::reduceDimCat_fit(data=train, column_name=vars_w_highlevels2, min_percentage=0.01, max_numOflevel=30)
+      train <- rAutoFE::reduceDimCat_transform(data = train, fit = fit_reduceDimCat2)
+      valid <- rAutoFE::reduceDimCat_transform(data = valid, fit = fit_reduceDimCat2)
+      test  <- rAutoFE::reduceDimCat_transform(data = test,  fit = fit_reduceDimCat2)
+      saveRDS(fit_reduceDimCat2, file.path(savePath, "fit_reduceDimCat2.rda"))
+      cat(">> [PART3] final step for auto feature engineering start! \n")
+      cat(">> 3.1 reduce high-levels done! \n")
+    }, error = function(e) print(">> 3.1 error! skip this process! \n")
+  )
 
   # 3.2 convert all char to factor
-  changeCols = names(which(sapply(train, is.character)))
-  train <- train[, (changeCols):=lapply(.SD, as.factor), .SDcols=changeCols]
-  valid <- valid[, (changeCols):=lapply(.SD, as.factor), .SDcols=changeCols]
-  test  <- test[, (changeCols):=lapply(.SD, as.factor), .SDcols=changeCols]
-  cat(">> 3.2 convert all char to factor done! \n")
-
-  # 3.3 remove one factor level
-  # fit_removeOneLevel <- removeOneLevel_fit(dt=train, nLevels=1)
-  # train <- removeOneLevel_transform(dt=train, fit=fit_removeOneLevel)
-  # valid <- removeOneLevel_transform(dt=valid, fit=fit_removeOneLevel)
-  # test  <- removeOneLevel_transform(dt=test,  fit=fit_removeOneLevel)
-  # saveRDS(fit_removeOneLevel, file.path(savePath, "fit_removeOneLevel.rda"))
-  # cat(">> 3.3 remove one factor level done! \n")
+  tryCatch(
+    {
+      changeCols = names(which(sapply(train, is.character)))
+      train <- train[, (changeCols):=lapply(.SD, as.factor), .SDcols=changeCols]
+      valid <- valid[, (changeCols):=lapply(.SD, as.factor), .SDcols=changeCols]
+      test  <- test[, (changeCols):=lapply(.SD, as.factor), .SDcols=changeCols]
+      cat(">> 3.2 convert all char to factor done! \n")
+    }, error = function(e) print(">> 3.2 error! skip this process! \n")
+  )
 
   # output
   output <- list(train=train, valid=valid, test=test)
