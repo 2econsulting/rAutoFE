@@ -17,15 +17,23 @@ convert2fac <- function(dt, columns){
 #' @param seed integer
 #' @export
 splitFrame <- function(dt, ratio, seed){
-  set.seed(seed)
-  train_index <- sample(nrow(dt), as.integer(nrow(dt)*ratio[1]))
-  train <- dt[train_index, ]
-  valid_test <- dt[-train_index, ]
-  valid_index <- sample(nrow(valid_test), as.integer(nrow(train)/ratio[1]*ratio[2]))
-  valid <- valid_test[valid_index, ]
-  test <- valid_test[-valid_index, ]
-  rm(valid_test)
-  return(list(train, valid, test))
+  if(length(ratio)==1){
+    set.seed(seed)
+    train_index <- sample(nrow(dt), as.integer(nrow(dt)*ratio[1]))
+    train <- dt[train_index, ]
+    valid <- dt[-train_index, ]
+    return(list(train, valid))
+  }else{
+    set.seed(seed)
+    train_index <- sample(nrow(dt), as.integer(nrow(dt)*ratio[1]))
+    train <- dt[train_index, ]
+    valid_test <- dt[-train_index, ]
+    valid_index <- sample(nrow(valid_test), as.integer(nrow(train)/ratio[1]*ratio[2]))
+    valid <- valid_test[valid_index, ]
+    test <- valid_test[-valid_index, ]
+    rm(valid_test)
+    return(list(train, valid, test))
+  }
 }
 
 

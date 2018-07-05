@@ -3,6 +3,7 @@
 - author : 2e Consulting DS Lab <jacobgreen1984@2e.co.kr>
 
 #### What's New
+- splitFrame update (2018-07-05)
 - tryCatch function update (2018-06-23) 
 - impute module update (2018-06-23)
 
