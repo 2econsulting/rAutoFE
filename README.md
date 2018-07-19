@@ -21,7 +21,7 @@
 #### install 
 ```r
 library(devtools)
-install_github("jacobgreen1984/rAutoFE")
+install_github("2econsulting/rAutoFE")
 library(rAutoFE)
 ```
 
