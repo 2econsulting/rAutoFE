@@ -24,8 +24,6 @@
 #' vi <- vi[which(sapply(churn[, mget(vi)], is.numeric))]
 #' fit <- cvNumtoCat_WoE_fit(data=train, vi=vi, y)
 #' @export
-
-# Important numeric variable to be category and make WoE
 cvNumtoCat_WoE_fit <- function(data, vi, y){
   numeric_names <- vi[which(sapply(data[, mget(vi)], is.numeric))]
   folds <- createFolds(data[[y]], k = 5, list = TRUE, returnTrain = FALSE)
@@ -92,7 +90,6 @@ cvNumtoCat_WoE_fit <- function(data, vi, y){
 #' cvNumtoCat_WoE_transform(data=valid, fit=fit)
 #' cvNumtoCat_WoE_transform(data=test, fit=fit)
 #' @export
-
 cvNumtoCat_WoE_transform <- function(data, fit){
   for(i in names(fit)){
     cv_interval <- fit[[i]][['cv_interval']]
