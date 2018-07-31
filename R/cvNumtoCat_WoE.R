@@ -20,28 +20,30 @@
 #' x = colnames(data_hex)[colnames(data_hex)!=y]
 #' ml <- autoFS(data_hex, x, y, num_of_model=5, num_of_vi=20)
 #' vi <- ml$top_vi
-#' vi <- vi[which(sapply(churn[, mget(vi)], function(x) length(levels(as.factor(x))) > 20))]
-#' vi <- vi[which(sapply(churn[, mget(vi)], is.numeric))]
-#' fit <- cvNumtoCat_WoE_fit(data=train, vi=vi, y)
+#' fit <- cvNumtoCat_WoE_fit(data=train, vi=vi, y, bin = 10, k = 5)
 #' @export
-cvNumtoCat_WoE_fit <- function(data, vi, y){
-  numeric_names <- vi[which(sapply(data[, mget(vi)], is.numeric))]
-  folds <- createFolds(data[[y]], k = 5, list = TRUE, returnTrain = FALSE)
+
+# Important numeric variable to be category and make WoE
+cvNumtoCat_WoE_fit <- function(data, vi, y, bin, k){
+  vi <- vi[which(sapply(data[, mget(vi)], is.numeric))]
+  numeric_names <- vi[which(sapply(data[, mget(vi)], function(x) length(unique(x)) > bin))]
+  folds <- createFolds(data[[y]], k = k, list = TRUE, returnTrain = FALSE)
   fit <- list()
+  bin <- bin + 1
   for (i in numeric_names){
     tmp <- c()
     for (j in 1:length(folds)){
-      interval <- sapply(data[folds[[j]], mget(i)], function(x) binr::bins.getvals(binr::bins(x, target.bins = 20, minpts = nrow(data[folds[[j]],])*0.01)))
+      interval <- sapply(data[folds[[j]], mget(i)], function(x) binr::bins.getvals(binr::bins(x, target.bins = bin, minpts = nrow(data[folds[[j]],])*0.01)))
       interval <- as.data.frame(interval)[[i]]
-      if (length(interval) > 20) {
-        interval <- interval[1:20]
-        interval[20] <- Inf
+      if (length(interval) > bin) {
+        interval <- interval[1:bin]
+        interval[bin] <- Inf
       }
-      if (length(interval) < 20) {
+      if (length(interval) < bin) {
         interval <- interval[!interval %in% Inf]
-        interval <- interval[1:20]
+        interval <- interval[1:bin]
         interval[is.na(interval)] <- max(interval, na.rm=TRUE)
-        interval[20] <- Inf
+        interval[bin] <- Inf
       }
       tmp <- rbind(tmp,interval)
     }
@@ -83,13 +85,12 @@ cvNumtoCat_WoE_fit <- function(data, vi, y){
 #' x = colnames(data_hex)[colnames(data_hex)!=y]
 #' ml <- autoFS(data_hex, x, y, num_of_model=5, num_of_vi=20)
 #' vi <- ml$top_vi
-#' vi <- vi[which(sapply(churn[, mget(vi)], function(x) length(levels(as.factor(x))) > 20))]
-#' vi <- vi[which(sapply(churn[, mget(vi)], is.numeric))]
-#' fit <- cvNumtoCat_WoE_fit(data=train, vi=vi, y)
+#' fit <- cvNumtoCat_WoE_fit(data=train, vi=vi, y, bin = 10, k = 5)
 #' cvNumtoCat_WoE_transform(data=train, fit=fit)
 #' cvNumtoCat_WoE_transform(data=valid, fit=fit)
 #' cvNumtoCat_WoE_transform(data=test, fit=fit)
 #' @export
+
 cvNumtoCat_WoE_transform <- function(data, fit){
   for(i in names(fit)){
     cv_interval <- fit[[i]][['cv_interval']]
