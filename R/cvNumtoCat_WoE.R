@@ -25,6 +25,7 @@
 
 # Important numeric variable to be category and make WoE
 cvNumtoCat_WoE_fit <- function(data, vi, y, bin, k){
+  if (bin < 2) {print("bin should be over 2")}
   vi <- vi[which(sapply(data[, mget(vi)], is.numeric))]
   numeric_names <- vi[which(sapply(data[, mget(vi)], function(x) length(unique(x)) > bin))]
   folds <- createFolds(data[[y]], k = k, list = TRUE, returnTrain = FALSE)
@@ -33,17 +34,25 @@ cvNumtoCat_WoE_fit <- function(data, vi, y, bin, k){
   for (i in numeric_names){
     tmp <- c()
     for (j in 1:length(folds)){
-      interval <- sapply(data[folds[[j]], mget(i)], function(x) binr::bins.getvals(binr::bins(x, target.bins = bin, minpts = nrow(data[folds[[j]],])*0.01)))
-      interval <- as.data.frame(interval)[[i]]
-      if (length(interval) > bin) {
-        interval <- interval[1:bin]
+      check <- try(sapply(data[folds[[j]], mget(i)], function(x) binr::bins.getvals(binr::bins(x, target.bins = bin, minpts = nrow(data[folds[[j]],])*0.01))), silent=T) 
+      if(is(check,"try-error")) {
+        interval <- sapply(data[folds[[j]], mget(i)], function(x) seq(min(x), max(x), (max(x)-min(x))/(bin-2)))
+        interval[1] <- -Inf
         interval[bin] <- Inf
-      }
-      if (length(interval) < bin) {
-        interval <- interval[!interval %in% Inf]
-        interval <- interval[1:bin]
-        interval[is.na(interval)] <- max(interval, na.rm=TRUE)
-        interval[bin] <- Inf
+      } 
+      else{
+        interval <- sapply(data[folds[[j]], mget(i)], function(x) binr::bins.getvals(binr::bins(x, target.bins = bin, minpts = nrow(data[folds[[j]],])*0.01)))
+        interval <- as.data.frame(interval)[[i]]
+        if (length(interval) > bin) {
+          interval <- interval[1:bin]
+          interval[bin] <- Inf
+        }
+        if (length(interval) < bin) {
+          interval <- interval[!interval %in% Inf]
+          interval <- interval[1:bin]
+          interval[is.na(interval)] <- max(interval, na.rm=TRUE)
+          interval[bin] <- Inf
+        }
       }
       tmp <- rbind(tmp,interval)
     }
